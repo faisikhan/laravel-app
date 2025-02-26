@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./laravel-backend
+    volumes:
+      - ./backend:/var/www/html
+      - backend-storage:/var/www/html/storage
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./vue-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - laravel-backend
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./web:/etc/nginx/conf.d
+    depends_on:
+      - laravel-backend
+      - vue-frontend
+
+volumes:
+  mysql-data:
+  backend-storage:
