@@ -19,7 +19,7 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - laravel-backend
+      - backend
 
   mysql:
     image: mysql:8.0
@@ -40,8 +40,8 @@ services:
     volumes:
       - ./web:/etc/nginx/conf.d
     depends_on:
-      - laravel-backend
-      - vue-frontend
+      - backend
+      - frontend
 
 volumes:
   mysql-data:
